@@ -1,19 +1,19 @@
 name: Update README with Activity
 
 on:
-  workflow_dispatch:   # 手動觸發，符合老師作業要求
+  workflow_dispatch:
 
 jobs:
   update-readme:
     runs-on: ubuntu-latest
     permissions:
-      contents: write   # 讓 workflow 有權限修改 README
+      contents: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Update README with recent activity
-        uses: JamesIves/github-activity-readme@v0.4.1
+        uses: JamesIves/github-activity-readme@v0.6.0
         with:
           GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
