@@ -21,7 +21,7 @@ jobs:
             echo "❌ Missing START_SECTION:activity marker"
             exit 1
           fi
-          if ! grep -q "" README.md; then
+          if ! grep -q "<!--END_SECTION:activity-->" README.md; then
             echo "❌ Missing END_SECTION:activity marker"
             exit 1
           fi
