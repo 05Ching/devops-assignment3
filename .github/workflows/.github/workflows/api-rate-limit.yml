@@ -1,0 +1,42 @@
+name: API Rate Limit Handling
+
+on:
+  workflow_dispatch:   # 手動觸發方便測試
+  schedule:
+    - cron: "0 */6 * * *"   # 每 6 小時跑一次
+
+jobs:
+  call-api:
+    runs-on: ubuntu-latest
+    env:
+      MAX_RETRIES: 3        # 最大重試次數
+      BACKOFF_SECONDS: 10   # 每次失敗後等待秒數
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Call GitHub API with retry
+        run: |
+          attempt=1
+          while [ $attempt -le $MAX_RETRIES ]; do
+            echo "Attempt $attempt calling GitHub API..."
+            
+            # 測試 API 呼叫（可改成實際 API，例如 issues 或 repo data）
+            status=$(curl -s -o response.json -w "%{http_code}" https://api.github.com/repos/${{ github.repository }}/commits)
+
+            if [ "$status" -eq 200 ]; then
+              echo "✅ API call succeeded"
+              cat response.json | head -n 5
+              break
+            else
+              echo "⚠️ API call failed with status $status"
+              if [ $attempt -eq $MAX_RETRIES ]; then
+                echo "❌ Exceeded max retries"
+                exit 1
+              fi
+              echo "⏳ Waiting $BACKOFF_SECONDS seconds before retry..."
+              sleep $BACKOFF_SECONDS
+            fi
+
+            attempt=$((attempt+1))
+          done
