@@ -1,0 +1,37 @@
+name: Aggregate Org Activity
+
+on:
+  schedule:
+    - cron: "0 */12 * * *"   # 每 12 小時執行一次
+  workflow_dispatch:
+
+jobs:
+  aggregate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create cache directory
+        run: mkdir -p .cache
+
+      - name: Fetch activity from multiple repos
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ORG_NAME: 05Ching   # 改成你的 GitHub 使用者或 org 名稱
+        run: |
+          repos=("devops-assignment3" "github-project" "zenhub_github")  # 你 org 底下的 repo 名單
+          results="[]"
+          for repo in "${repos[@]}"; do
+            echo "Fetching events for $repo..."
+            resp=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+              "https://api.github.com/repos/$ORG_NAME/$repo/events?per_page=5")
+            results=$(echo $results $resp | jq -s 'add')
+          done
+          echo $results | jq . > .cache/org-activity.json
+
+      - name: Upload cache artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: org-activity
+          path: .cache/org-activity.json
