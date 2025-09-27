@@ -4,13 +4,15 @@ on:
   workflow_dispatch:   # 手動觸發
   schedule:
     - cron: "0 * * * *"   # 每小時執行一次
+  pull_request:          # 當 PR 建立或更新時也會觸發
+    branches:
+      - main
 
 jobs:
   update-readme:
     runs-on: ubuntu-latest
     permissions:
-      contents: write    # Workflow 需要修改 README
-
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -19,4 +21,4 @@ jobs:
         uses: TheDanniCraft/activity-log@v1
         with:
           GITHUB_USERNAME: 05Ching   # 你的 GitHub 帳號
-          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}   # 使用你設定的 REPO_TOKEN
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
