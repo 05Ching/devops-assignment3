@@ -1,0 +1,29 @@
+name: Preview README in PR
+
+on:
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 * * *" # 每天凌晨 00:00 自動跑一次
+
+jobs:
+  preview-readme:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16, 18, 20]  # 三種版本測試
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Print README first 5 lines
+        run: |
+          echo "Preview README.md (Node ${{ matrix.node-version }})"
+          head -n 5 README.md
