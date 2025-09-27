@@ -1,5 +1,7 @@
 # DevOps Assignment 3
 
+[![Update README with Activity](https://github.com/05Ching/devops-assignment3/actions/workflows/update-readme.yml/badge.svg)](https://github.com/05Ching/devops-assignment3/actions/workflows/update-readme.yml)
+
 This repository is for Assignment 3 — DevOps: Auto-Updating README via GitHub Actions + Project Management Linkage.
 
 ## Recent Activity
