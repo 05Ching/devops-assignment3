@@ -2,27 +2,27 @@ name: Preview README in PR
 
 on:
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
   schedule:
-    - cron: '0 3 * * *'   # 每天 UTC 03:00 自動跑一次
+    - cron: "0 0 * * *"   # 每天 00:00 UTC 定時執行
 
 jobs:
-  preview:
+  preview-readme:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [16, 18]   # 同時在 Node.js 16 和 18 執行
+        node-version: [16, 18, 20]   # 模擬不同環境，這裡用 Node.js 版本舉例
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js ${{ matrix.node }}
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node }}
+          node-version: ${{ matrix.node-version }}
 
-      - name: Preview README section
+      - name: Preview README diff
         run: |
-          echo "Running on Node.js ${{ matrix.node }}"
-          echo "----- README HEAD (20 lines) -----"
-          head -n 20 README.md
+          echo "===== README.md diff preview ====="
+          git diff origin/main -- README.md || echo "No diff found"
